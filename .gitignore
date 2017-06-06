@@ -22,3 +22,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Working folder ###
+gitignore/
