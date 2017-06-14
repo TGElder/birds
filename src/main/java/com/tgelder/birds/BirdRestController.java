@@ -47,8 +47,8 @@ public class BirdRestController {
 		Bird result = birdRepository.save(bird);
 		
 		URI location = ServletUriComponentsBuilder
-			.fromCurrentRequest().path("/{name}")
-			.buildAndExpand(result.getName()).toUri();
+			.fromCurrentRequest().path("/{id}")
+			.buildAndExpand(result.getId()).toUri();
 
 		return ResponseEntity.created(location).build();
 
@@ -68,7 +68,7 @@ public class BirdRestController {
 			bird.setFavourite(put.getFavourite());
 		}
 		
-		if (put.getPhotos() != null){
+		if (!put.getPhotos().isEmpty()){
 			bird.setPhotos(put.getPhotos());
 		}
 		

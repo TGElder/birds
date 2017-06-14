@@ -63,17 +63,17 @@ public class BirdsApplication {
 			
 			
 			
-	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM BIRD")) {
-	            log.info(result.toString());
-	        }
-	        
-	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM PHOTO")) {
-	            log.info(result.toString());
-	        }
-	        
-	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM BIRD_PHOTO")) {
-	            log.info(result.toString());
-	        }
+//	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM BIRD")) {
+//	            log.info(result.toString());
+//	        }
+//	        
+//	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM PHOTO")) {
+//	            log.info(result.toString());
+//	        }
+//	        
+//	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM BIRD_PHOTO")) {
+//	            log.info(result.toString());
+//	        }
 		};
 	}
 	
