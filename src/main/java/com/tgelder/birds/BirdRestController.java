@@ -1,16 +1,17 @@
 package com.tgelder.birds;
 
 import java.net.URI;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/birds")
@@ -24,21 +25,19 @@ public class BirdRestController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	Bird getBird(@PathVariable Long id) {
+	BirdResource getBird(@PathVariable Long id) {
 		
-		return this.birdRepository.findOne(id);
+		return new BirdResource(this.birdRepository.findOne(id));
 	}
 	
-//	@RequestMapping(method = RequestMethod.GET, value = "/{birdName}")
-//	Bird getBird(@PathVariable String birdName) {
-//		
-//		return this.birdRepository.findByName(birdName);
-//	}
-//	
-	@RequestMapping(method = RequestMethod.GET, value = "/")
-	List<Bird> getBirds() {
+	@RequestMapping(method = RequestMethod.GET, value = "/",
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	Resources<BirdResource> getBirds() {
 		
-		return this.birdRepository.findAll();
+		return new Resources<>(this.birdRepository.findAll()
+				.stream()
+				.map(BirdResource::new)
+				.collect(Collectors.toList()));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/")
@@ -46,11 +45,9 @@ public class BirdRestController {
 
 		Bird result = birdRepository.save(bird);
 		
-		URI location = ServletUriComponentsBuilder
-			.fromCurrentRequest().path("/{id}")
-			.buildAndExpand(result.getId()).toUri();
-
-		return ResponseEntity.created(location).build();
+		BirdResource resource = new BirdResource(result);
+		
+		return ResponseEntity.created(URI.create(resource.getLink("self").getHref())).build();
 
 	}
 	

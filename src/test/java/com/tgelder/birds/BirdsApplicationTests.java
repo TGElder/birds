@@ -90,8 +90,8 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/birds/"))
 			   .andExpect(status().isOk())
 			   .andExpect(content().contentType(contentType))
-			   .andExpect(jsonPath("$", hasSize(1)))
-			   .andExpect(jsonPath("$[*].name", containsInAnyOrder("Blackbird")));
+			   .andExpect(jsonPath("$.content", hasSize(1)))
+			   .andExpect(jsonPath("$.content[*].bird.name", containsInAnyOrder("Blackbird")));
 
 	}
 	
@@ -101,11 +101,11 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/birds/"+testBirds.get(0).getId().intValue()))
 			   .andExpect(status().isOk())
 			   .andExpect(content().contentType(contentType))
-			   .andExpect(jsonPath("$.id", is(testBirds.get(0).getId().intValue())))
-			   .andExpect(jsonPath("$.name", is("Blackbird")))
-			   .andExpect(jsonPath("$.photos", hasSize(2)))
-			   .andExpect(jsonPath("$.photos[*].location", containsInAnyOrder("Elmley","Barnes Wetland Centre")))
-			   .andExpect(jsonPath("$.favourite.location", is("Barnes Wetland Centre")));
+			   .andExpect(jsonPath("$.bird.id", is(testBirds.get(0).getId().intValue())))
+			   .andExpect(jsonPath("$.bird.name", is("Blackbird")))
+			   .andExpect(jsonPath("$.bird.photos", hasSize(2)))
+			   .andExpect(jsonPath("$.bird.photos[*].location", containsInAnyOrder("Elmley","Barnes Wetland Centre")))
+			   .andExpect(jsonPath("$.bird.favourite.location", is("Barnes Wetland Centre")));
 
 	}
 	
@@ -125,7 +125,7 @@ public class BirdsApplicationTests {
 							.andReturn();
 		
 		mockMvc.perform(get(result.getResponse().getRedirectedUrl()))
-				.andExpect(jsonPath("$.name", is("Bullfinch")));
+				.andExpect(jsonPath("$.bird.name", is("Bullfinch")));
 		
 
 	}
@@ -148,9 +148,9 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/birds/"+testBirds.get(0).getId().intValue()))
 		   .andExpect(status().isOk())
 		   .andExpect(content().contentType(contentType))
-		   .andExpect(jsonPath("$.photos", hasSize(2)))
-		   .andExpect(jsonPath("$.photos[*].location", containsInAnyOrder("Barnes Wetland Centre","Farne Islands")))
-		   .andExpect(jsonPath("$.favourite.location", is("Barnes Wetland Centre")));
+		   .andExpect(jsonPath("$.bird.photos", hasSize(2)))
+		   .andExpect(jsonPath("$.bird.photos[*].location", containsInAnyOrder("Barnes Wetland Centre","Farne Islands")))
+		   .andExpect(jsonPath("$.bird.favourite.location", is("Barnes Wetland Centre")));
 	}
 	
 	@Test
@@ -171,9 +171,9 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/birds/"+testBirds.get(0).getId().intValue()))
 		   .andExpect(status().isOk())
 		   .andExpect(content().contentType(contentType))
-		   .andExpect(jsonPath("$.photos", hasSize(2)))
-		   .andExpect(jsonPath("$.photos[*].location", containsInAnyOrder("Barnes Wetland Centre","Elmley")))
-		   .andExpect(jsonPath("$.favourite.location", is("Elmley")));
+		   .andExpect(jsonPath("$.bird.photos", hasSize(2)))
+		   .andExpect(jsonPath("$.bird.photos[*].location", containsInAnyOrder("Barnes Wetland Centre","Elmley")))
+		   .andExpect(jsonPath("$.bird.favourite.location", is("Elmley")));
 	}
 	
 	@Test
@@ -182,8 +182,8 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/photos/"))
 			   .andExpect(status().isOk())
 			   .andExpect(content().contentType(contentType))
-			   .andExpect(jsonPath("$", hasSize(3)))
-			   .andExpect(jsonPath("$[*].location", containsInAnyOrder("Elmley","Barnes Wetland Centre","Farne Islands")));
+			   .andExpect(jsonPath("$.content", hasSize(3)))
+			   .andExpect(jsonPath("$.content[*].photo.location", containsInAnyOrder("Elmley","Barnes Wetland Centre","Farne Islands")));
 
 	}
 	
@@ -193,10 +193,10 @@ public class BirdsApplicationTests {
 		mockMvc.perform(get("/photos/"+testPhotos.get(0).getId().intValue()))
 			   .andExpect(status().isOk())
 			   .andExpect(content().contentType(contentType))
-			   .andExpect(jsonPath("$.id", is(testPhotos.get(0).getId().intValue())))
-			   .andExpect(jsonPath("$.path", is("barnes_wetland_centre.jpg")))
-			   .andExpect(jsonPath("$.location", is("Barnes Wetland Centre")))
-			   .andExpect(jsonPath("$.timestamp", is(new SimpleDateFormat("yyyyMMdd").parse("20161215").getTime())));
+			   .andExpect(jsonPath("$.photo.id", is(testPhotos.get(0).getId().intValue())))
+			   .andExpect(jsonPath("$.photo.path", is("barnes_wetland_centre.jpg")))
+			   .andExpect(jsonPath("$.photo.location", is("Barnes Wetland Centre")))
+			   .andExpect(jsonPath("$.photo.timestamp", is(new SimpleDateFormat("yyyyMMdd").parse("20161215").getTime())));
 
 	}
 	
@@ -216,9 +216,9 @@ public class BirdsApplicationTests {
 							.andReturn();
 		
 		mockMvc.perform(get(result.getResponse().getRedirectedUrl()))
-		   .andExpect(jsonPath("$.path", is("dungeness.jpg")))
-		   .andExpect(jsonPath("$.location", is("Dungeness")))
-		   .andExpect(jsonPath("$.timestamp", is(new SimpleDateFormat("yyyyMMdd").parse("20170515").getTime())));
+		   .andExpect(jsonPath("$.photo.path", is("dungeness.jpg")))
+		   .andExpect(jsonPath("$.photo.location", is("Dungeness")))
+		   .andExpect(jsonPath("$.photo.timestamp", is(new SimpleDateFormat("yyyyMMdd").parse("20170515").getTime())));
 		
 
 	}
