@@ -1,14 +1,14 @@
 package com.tgelder.birds;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
+
+
+import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tgelder.birds.storage.StorageFileNotFoundException;
 import com.tgelder.birds.storage.StorageService;
@@ -33,20 +33,6 @@ public class FileUploadController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/files/upload")
-    public String listUploadedFiles(Model model) throws IOException {
-    	
-        model.addAttribute("files", storageService
-                .loadAll()
-                .map(path ->
-                        MvcUriComponentsBuilder
-                                .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
-                                .build().toString())
-                .collect(Collectors.toList()));
-        
-        return "uploadForm";
-    }
-
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -59,26 +45,29 @@ public class FileUploadController {
     }
 
     @PostMapping("/files")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
+    	
         storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+        
+    	URI location = ServletUriComponentsBuilder
+				.fromCurrentRequest().path("/{file}")
+				.buildAndExpand(file.getOriginalFilename()).toUri();
 
-        return "redirect:/files/upload";
+    	return ResponseEntity.created(location).build();
+
     }
     
     @DeleteMapping("/files/{filename:.+}") 
-        public String handleFileDelete(@PathVariable String filename,
+        public ResponseEntity<?> handleFileDelete(@PathVariable String filename,
                 RedirectAttributes redirectAttributes) {
 
 		storageService.delete(filename);
-		redirectAttributes.addFlashAttribute("message",
-		"You successfully deleted " + filename + "!");
 		
-		return "redirect:/files/upload";
-		}
+		return 	ResponseEntity.noContent().build();
+
+	}
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {

@@ -1,6 +1,7 @@
 package com.tgelder.birds.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,9 @@ import java.util.stream.Stream;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private final Path rootLocation;
+	@Value("${storage.location}")
+    private Path rootLocation;
 
-    @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
-        this.rootLocation = Paths.get(properties.getLocation());
-    }
 
     @Override
     public void store(MultipartFile file) {
@@ -31,6 +29,7 @@ public class FileSystemStorageService implements StorageService {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
             }
+             
             Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
         } catch (IOException e) {
             throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
@@ -73,7 +72,13 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void deleteAll() {
+
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
+        try {
+            Files.createDirectory(rootLocation);
+        } catch (IOException e) {
+            throw new StorageException("Could not initialize storage", e);
+        }
     }
 
 	@Override
@@ -91,6 +96,8 @@ public class FileSystemStorageService implements StorageService {
 	
     @Override
     public void init() {
+    	
+
     	
     	if (!Files.exists(rootLocation))
     	{

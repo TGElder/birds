@@ -8,12 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.tgelder.birds.storage.StorageService;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,8 +25,11 @@ import static org.hamcrest.Matchers.*;
 import static org.exparity.hamcrest.date.DateMatchers.*;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.util.ArrayList;
@@ -44,6 +50,9 @@ public class BirdsApplicationTests {
 	
 	@Autowired
 	private PhotoRepository photoRepository;
+	
+	@Autowired
+	private StorageService storageService;
 	
 	private List<Bird> testBirds = new ArrayList<> ();
 	private List<Photo> testPhotos = new ArrayList<> ();
@@ -82,6 +91,13 @@ public class BirdsApplicationTests {
 		
 		testBirds.add(birdRepository.save(blackbird));
 
+		
+		storageService.deleteAll();
+		
+		InputStream inputStream = resourceLoader.getResource("classpath:chaffinch.jpg").getInputStream();
+		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "chaffinch.jpg", "image/jpg", inputStream);
+		storageService.store(mockMultipartFile);
+		
 	}
 	
 	@Test
@@ -223,8 +239,38 @@ public class BirdsApplicationTests {
 
 	}
 	
+	@Test
+	public void testFileUpload() throws Exception {
+
+		InputStream inputStream = resourceLoader.getResource("classpath:jackdaw.jpg").getInputStream();
+		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "jackdaw.jpg", "image/jpg", inputStream);
+		
+		MvcResult result = mockMvc.perform(fileUpload("/files")
+	            .file(mockMultipartFile)
+	            .contentType(MediaType.MULTIPART_FORM_DATA))
+	            .andExpect(status().isCreated())
+	            .andReturn();
+			    
+	    mockMvc.perform(get(result.getResponse().getRedirectedUrl()))
+	    	.andExpect(content().contentType("image/jpeg"))
+	    	.andExpect(status().isOk());
+	    	
+	}
 	
-	
+	@Test
+	public void testFileDelete() throws Exception {
+
+	    mockMvc.perform(get("/files/chaffinch.jpg"))
+	    	.andExpect(content().contentType("image/jpeg"))
+	    	.andExpect(status().isOk());
+	    
+	    mockMvc.perform(delete("/files/chaffinch.jpg"))
+	    	.andExpect(status().isNoContent());
+	    
+	    mockMvc.perform(get("/files/chaffinch.jpg"))
+    		.andExpect(status().isNotFound());
+
+	}
 
 
 }
