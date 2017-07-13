@@ -1,6 +1,9 @@
 package com.tgelder.birds;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -14,7 +17,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Bird {
-	
+		
 	@Id @GeneratedValue	private Long id;	
 	private String name;
 	@ManyToOne private Photo favourite;
@@ -25,6 +28,8 @@ public class Bird {
 		    joinColumns=@JoinColumn(name="BIRD_ID", referencedColumnName="ID"),
 		    inverseJoinColumns=@JoinColumn(name="PHOTO_ID", referencedColumnName="ID"))
 	private Set<Photo> photos = new HashSet<>();
+	
+	private int sequence;
 	
 	public Bird(String name) {
 		this.name = name;
@@ -65,6 +70,25 @@ public class Bird {
 	public String toString() {
 		
 		return id+": "+name;
+	}
+
+	public Date getFirstSeen() {
+		
+		if (photos.isEmpty()) {
+			return null;
+		}
+		
+		List<Photo> photosList = new ArrayList<>(photos);
+		photosList.sort((Photo a, Photo b)->a.getTimestamp().compareTo(b.getTimestamp()));
+		return photosList.get(0).getTimestamp();
+	}
+	
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+	
+	public int getSequence() {
+		return sequence;
 	}
 
 	

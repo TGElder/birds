@@ -121,7 +121,9 @@ public class BirdsApplicationTests {
 			   .andExpect(jsonPath("$.bird.name", is("Blackbird")))
 			   .andExpect(jsonPath("$.bird.photos", hasSize(2)))
 			   .andExpect(jsonPath("$.bird.photos[*].location", containsInAnyOrder("Elmley","Barnes Wetland Centre")))
-			   .andExpect(jsonPath("$.bird.favourite.location", is("Barnes Wetland Centre")));
+			   .andExpect(jsonPath("$.bird.favourite.location", is("Barnes Wetland Centre")))
+		   	   .andExpect(jsonPath("$.bird.firstSeen", is(new SimpleDateFormat("yyyyMMdd").parse("20161122").getTime())));
+
 
 	}
 	
@@ -270,6 +272,70 @@ public class BirdsApplicationTests {
 	    mockMvc.perform(get("/files/chaffinch.jpg"))
     		.andExpect(status().isNotFound());
 
+	}
+	
+	@Test
+	public void testSequencer() throws Exception {
+		
+		birdRepository.deleteAllInBatch();
+
+		
+		String url1 = mockMvc.perform(post("/birds/")
+				.contentType(contentType)
+				.content("{\"name\":\"bird1\"}"))
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getRedirectedUrl();
+		
+		String url2 = mockMvc.perform(post("/birds/")
+				.contentType(contentType)
+				.content("{\"name\":\"bird2\"}"))
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getRedirectedUrl();
+		
+		String url3 = mockMvc.perform(post("/birds/")
+				.contentType(contentType)
+				.content("{\"name\":\"bird3\"}"))
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getRedirectedUrl();
+
+		mockMvc.perform(put(url1)
+				.contentType(contentType)
+				.content("{\"photos\":[{\"id\":"
+						+testPhotos.get(0).getId().intValue()
+						+"}]}"))
+				.andExpect(status().isOk());
+		
+		mockMvc.perform(put(url2)
+				.contentType(contentType)
+				.content("{\"photos\":[{\"id\":"
+						+testPhotos.get(1).getId().intValue()
+						+"}]}"))
+				.andExpect(status().isOk());
+		
+		mockMvc.perform(put(url3)
+				.contentType(contentType)
+				.content("{\"photos\":[{\"id\":"
+						+testPhotos.get(2).getId().intValue()
+						+"}]}"))
+				.andExpect(status().isOk());
+		
+		mockMvc.perform(get(url1))
+		   .andExpect(status().isOk())
+		   .andExpect(jsonPath("$.bird.sequence", is(1)));
+		
+		mockMvc.perform(get(url2))
+		   .andExpect(status().isOk())
+		   .andExpect(jsonPath("$.bird.sequence", is(0)));
+		
+		mockMvc.perform(get(url3))
+		   .andExpect(status().isOk())
+		   .andExpect(jsonPath("$.bird.sequence", is(2)));
 	}
 
 

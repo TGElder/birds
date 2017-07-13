@@ -33,7 +33,7 @@ public class BirdRestController {
 	@RequestMapping(method = RequestMethod.GET, value = "/",
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	Resources<BirdResource> getBirds() {
-		
+				
 		return new Resources<>(this.birdRepository.findAll()
 				.stream()
 				.map(BirdResource::new)
@@ -44,6 +44,7 @@ public class BirdRestController {
 	ResponseEntity<?> add(@RequestBody Bird bird) {
 
 		Bird result = birdRepository.save(bird);
+		birdRepository.sequence();
 		
 		BirdResource resource = new BirdResource(result);
 		
@@ -70,6 +71,7 @@ public class BirdRestController {
 		}
 		
 		birdRepository.save(bird);
+		birdRepository.sequence();
 
 		return ResponseEntity.ok().build();
 
