@@ -1,0 +1,54 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<div>
+		<ul>
+			<th:block th:each="bird : ${birds}">
+				<h1 align="center" th:text="${bird.sequence + ' ' + bird.name}"></h1>
+				<p align="center">
+					<th:block th:text=
+					"${'First photographed: ' 
+					+ #dates.day(bird.firstSeen)
+					+ ' '
+					+ #dates.monthName(bird.firstSeen)
+					+ ' '
+					+ #dates.year(bird.firstSeen)
+					+ ' @ '
+					+ bird.firstSeenWhere}"
+					/>
+					<br/>
+					<th:block th:text=
+					"${'Last photographed: ' 
+					+ #dates.day(bird.lastSeen)
+					+ ' '
+					+ #dates.monthName(bird.lastSeen)
+					+ ' '
+					+ #dates.year(bird.lastSeen)
+					+ ' @ '
+					+ bird.lastSeenWhere}"
+					/>
+				</p>
+				<div th:if="${photoUrls.get(bird)!=null}">
+					<p align="center">
+						<a th:href="${photoUrls.get(bird)}">
+	  				 		<img th:src="${thumbUrls.get(bird)}" th:alt="${bird.name}"></img>
+					 	</a>
+					 	<br/>
+					 	<th:block th:text=
+						"${'This photo: ' 
+						+ #dates.day(bird.favourite.timestamp)
+						+ ' '
+						+ #dates.monthName(bird.favourite.timestamp)
+						+ ' '
+						+ #dates.year(bird.favourite.timestamp)
+						+ ' @ '
+						+ bird.favourite.location}" 
+						/>
+					</p>
+				 </div>
+			</th:block>
+		</ul>
+	</div>
+
+</body>
+</html>

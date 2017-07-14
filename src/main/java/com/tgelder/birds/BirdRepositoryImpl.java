@@ -30,7 +30,7 @@ public class BirdRepositoryImpl implements BirdRepositoryCustom {
 		sequence.sort((Bird a, Bird b)->a.getFirstSeen().compareTo(b.getFirstSeen()));
 		
 		for (int s=0; s<sequence.size(); s++) {
-			sequence.get(s).setSequence(s);
+			sequence.get(s).setSequence(s+1);
 		}
 		
 		for (Bird bird : all) {

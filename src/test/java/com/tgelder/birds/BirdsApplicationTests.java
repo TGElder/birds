@@ -327,15 +327,15 @@ public class BirdsApplicationTests {
 		
 		mockMvc.perform(get(url1))
 		   .andExpect(status().isOk())
-		   .andExpect(jsonPath("$.bird.sequence", is(1)));
+		   .andExpect(jsonPath("$.bird.sequence", is(2)));
 		
 		mockMvc.perform(get(url2))
 		   .andExpect(status().isOk())
-		   .andExpect(jsonPath("$.bird.sequence", is(0)));
+		   .andExpect(jsonPath("$.bird.sequence", is(1)));
 		
 		mockMvc.perform(get(url3))
 		   .andExpect(status().isOk())
-		   .andExpect(jsonPath("$.bird.sequence", is(2)));
+		   .andExpect(jsonPath("$.bird.sequence", is(3)));
 	}
 
 

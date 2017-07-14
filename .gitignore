@@ -25,3 +25,6 @@ nbdist/
 
 ### Working folder ###
 gitignore/
+
+### Folder for photo uploads ###
+upload-dir/
