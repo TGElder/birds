@@ -1,14 +1,13 @@
 package com.tgelder.birds;
 
-import java.text.SimpleDateFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +24,12 @@ public class BirdsApplication {
 	
     @Autowired
     JdbcTemplate jdbcTemplate;
+    
+    @Value("${api.username}")
+	private String username;
+	
+	@Value("${api.password}")
+	private String password;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(BirdsApplication.class, args);
@@ -57,8 +62,9 @@ public class BirdsApplication {
 //			birdRepository.save(blackBird);
 //			birdRepository.save(snipe);
 //			birdRepository.save(oystercatcher);
+
 			
-			accountRepository.save(new Account("telder", passwordEncoder.encode("whathaburt")));
+			accountRepository.save(new Account(username,passwordEncoder.encode(password)));
 			
 			
 //	        for (Object result : jdbcTemplate.queryForList("SELECT * FROM BIRD")) {
