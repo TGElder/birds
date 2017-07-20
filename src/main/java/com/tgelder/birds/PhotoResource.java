@@ -14,8 +14,8 @@ public class PhotoResource extends ResourceSupport {
 		
 		this.photo = photo;
 		this.add(linkTo(methodOn(PhotoRestController.class).getPhoto(photo.getId())).withRel("self"));
-		this.add(new Link("/files/"+photo.getPath()+"_thumb.jpg").withRel("thumb"));
-		this.add(new Link("/files/"+photo.getPath()+".jpg").withRel("photo"));
+		this.add(new Link(photo.getPath()+"_thumb.jpg").withRel("thumb"));
+		this.add(new Link(photo.getPath()+".jpg").withRel("photo"));
 		
 	}
 	
