@@ -27,7 +27,7 @@ public class BirdRepositoryImpl implements BirdRepositoryCustom {
 		
 		sequence.removeIf(b->b.getFirstSeen()==null);
 		
-		sequence.sort((Bird a, Bird b)->a.getFirstSeen().compareTo(b.getFirstSeen()));
+		sequence.sort((Bird a, Bird b)->a.getFirstSeen().getTimestamp().compareTo(b.getFirstSeen().getTimestamp()));
 		
 		for (int s=0; s<sequence.size(); s++) {
 			sequence.get(s).setSequence(s+1);

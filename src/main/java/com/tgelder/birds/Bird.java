@@ -72,7 +72,7 @@ public class Bird {
 		return id+": "+name;
 	}
 
-	public Date getFirstSeen() {
+	public Photo getFirstSeen() {
 		
 		if (photos.isEmpty()) {
 			return null;
@@ -80,22 +80,11 @@ public class Bird {
 		
 		List<Photo> photosList = new ArrayList<>(photos);
 		photosList.sort((a, b)->a.getTimestamp().compareTo(b.getTimestamp()));
-		return photosList.get(0).getTimestamp();
+		return photosList.get(0);
 	}
-	
-	public String getFirstSeenWhere() {
-		
-		if (photos.isEmpty()) {
-			return null;
-		}
-		
-		List<Photo> photosList = new ArrayList<>(photos);
-		photosList.sort((a, b)->a.getTimestamp().compareTo(b.getTimestamp()));
-		return photosList.get(0).getLocation();
-	}
-	
 
-	public Date getLastSeen() {
+
+	public Photo getLastSeen() {
 		
 		if (photos.isEmpty()) {
 			return null;
@@ -103,19 +92,9 @@ public class Bird {
 		
 		List<Photo> photosList = new ArrayList<>(photos);
 		photosList.sort((a, b)->b.getTimestamp().compareTo(a.getTimestamp()));
-		return photosList.get(0).getTimestamp();
+		return photosList.get(0);
 	}
-	
-	public String getLastSeenWhere() {
-		
-		if (photos.isEmpty()) {
-			return null;
-		}
-		
-		List<Photo> photosList = new ArrayList<>(photos);
-		photosList.sort((a, b)->b.getTimestamp().compareTo(a.getTimestamp()));
-		return photosList.get(0).getLocation();
-	}
+
 	
 	public void setSequence(int sequence) {
 		this.sequence = sequence;

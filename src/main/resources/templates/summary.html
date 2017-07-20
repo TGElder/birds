@@ -1,3 +1,6 @@
+<head>
+    <title>The Birds</title>
+</head>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
@@ -5,36 +8,55 @@
 		<ul>
 			<th:block th:each="bird : ${birds}">
 				<h1 align="center" th:text="${bird.sequence + ' ' + bird.name}"></h1>
-				<p align="center">
-					<th:block th:text=
-					"${'First photographed: ' 
-					+ #dates.day(bird.firstSeen)
-					+ ' '
-					+ #dates.monthName(bird.firstSeen)
-					+ ' '
-					+ #dates.year(bird.firstSeen)
-					+ ' @ '
-					+ bird.firstSeenWhere}"
-					/>
-					<br/>
-					<th:block th:text=
-					"${'Last photographed: ' 
-					+ #dates.day(bird.lastSeen)
-					+ ' '
-					+ #dates.monthName(bird.lastSeen)
-					+ ' '
-					+ #dates.year(bird.lastSeen)
-					+ ' @ '
-					+ bird.lastSeenWhere}"
-					/>
-				</p>
+				
+					<div th:if="${bird.firstSeen.sameEvent(bird.lastSeen)}">
+						<p align="center">
+	 						<th:block th:text=
+							"${'Photographed once: ' 
+							+ #dates.day(bird.firstSeen.timestamp)
+							+ ' '
+							+ #dates.monthName(bird.firstSeen.timestamp)
+							+ ' '
+							+ #dates.year(bird.firstSeen.timestamp)
+							+ ' @ '
+							+ bird.firstSeen.location}"
+							/>
+						</p>
+ 					</div>
+					<div th:unless="${bird.firstSeen.sameEvent(bird.lastSeen)}">
+					<p align="center">
+						<th:block th:text=
+							"${'First photographed: ' 
+							+ #dates.day(bird.firstSeen.timestamp)
+							+ ' '
+							+ #dates.monthName(bird.firstSeen.timestamp)
+							+ ' '
+							+ #dates.year(bird.firstSeen.timestamp)
+							+ ' @ '
+							+ bird.firstSeen.location}"
+							/>
+							<br/>
+							<th:block th:text=
+							"${'Last photographed: ' 
+							+ #dates.day(bird.lastSeen.timestamp)
+							+ ' '
+							+ #dates.monthName(bird.lastSeen.timestamp)
+							+ ' '
+							+ #dates.year(bird.lastSeen.timestamp)
+							+ ' @ '
+							+ bird.lastSeen.location}"
+							/>
+						</p>
+
+					</div>
+					
 				<div th:if="${photoUrls.get(bird)!=null}">
 					<p align="center">
 						<a th:href="${photoUrls.get(bird)}">
 	  				 		<img th:src="${thumbUrls.get(bird)}" th:alt="${bird.name}"></img>
 					 	</a>
 					 	<br/>
-					 	<th:block th:text=
+					 	<th:block th:unless="${bird.firstSeen.sameEvent(bird.lastSeen)}" th:text=
 						"${'This photo: ' 
 						+ #dates.day(bird.favourite.timestamp)
 						+ ' '

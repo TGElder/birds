@@ -51,4 +51,12 @@ public class Photo {
 		return id + ": " + path;
 	}
 	
+	public boolean sameEvent(Photo other) {
+		return other.location.equals(location)
+			   && other.timestamp.getDay()==timestamp.getDay()
+			   && other.timestamp.getMonth()==timestamp.getMonth()
+			   && other.timestamp.getYear()==timestamp.getYear();
+				
+	}
+	
 }

@@ -114,7 +114,7 @@ public class BirdsApplicationTests {
 			   .andExpect(jsonPath("$.bird.photos", hasSize(2)))
 			   .andExpect(jsonPath("$.bird.photos[*].location", containsInAnyOrder("Elmley","Barnes Wetland Centre")))
 			   .andExpect(jsonPath("$.bird.favourite.location", is("Barnes Wetland Centre")))
-		   	   .andExpect(jsonPath("$.bird.firstSeen", is(new SimpleDateFormat("yyyyMMdd").parse("20161122").getTime())));
+		   	   .andExpect(jsonPath("$.bird.firstSeen.timestamp", is(new SimpleDateFormat("yyyyMMdd").parse("20161122").getTime())));
 
 
 	}
