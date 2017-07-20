@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.tgelder.birds.storage.StorageService;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -50,10 +49,7 @@ public class BirdsApplicationTests {
 	
 	@Autowired
 	private PhotoRepository photoRepository;
-	
-	@Autowired
-	private StorageService storageService;
-	
+
 	private List<Bird> testBirds = new ArrayList<> ();
 	private List<Photo> testPhotos = new ArrayList<> ();
 	
@@ -92,11 +88,7 @@ public class BirdsApplicationTests {
 		testBirds.add(birdRepository.save(blackbird));
 
 		
-		storageService.deleteAll();
-		
-		InputStream inputStream = resourceLoader.getResource("classpath:chaffinch.jpg").getInputStream();
-		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "chaffinch.jpg", "image/jpg", inputStream);
-		storageService.store(mockMultipartFile);
+	
 		
 	}
 	
@@ -240,39 +232,7 @@ public class BirdsApplicationTests {
 		
 
 	}
-	
-	@Test
-	public void testFileUpload() throws Exception {
 
-		InputStream inputStream = resourceLoader.getResource("classpath:jackdaw.jpg").getInputStream();
-		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "jackdaw.jpg", "image/jpg", inputStream);
-		
-		MvcResult result = mockMvc.perform(fileUpload("/files")
-	            .file(mockMultipartFile)
-	            .contentType(MediaType.MULTIPART_FORM_DATA))
-	            .andExpect(status().isCreated())
-	            .andReturn();
-			    
-	    mockMvc.perform(get(result.getResponse().getRedirectedUrl()))
-	    	.andExpect(content().contentType("image/jpeg"))
-	    	.andExpect(status().isOk());
-	    	
-	}
-	
-	@Test
-	public void testFileDelete() throws Exception {
-
-	    mockMvc.perform(get("/files/chaffinch.jpg"))
-	    	.andExpect(content().contentType("image/jpeg"))
-	    	.andExpect(status().isOk());
-	    
-	    mockMvc.perform(delete("/files/chaffinch.jpg"))
-	    	.andExpect(status().isNoContent());
-	    
-	    mockMvc.perform(get("/files/chaffinch.jpg"))
-    		.andExpect(status().isNotFound());
-
-	}
 	
 	@Test
 	public void testSequencer() throws Exception {

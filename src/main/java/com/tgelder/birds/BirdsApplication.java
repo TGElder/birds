@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.tgelder.birds.storage.StorageService;
 
 @SpringBootApplication
 @Configuration
@@ -82,16 +81,11 @@ public class BirdsApplication {
 	}
 	
 
-	@Bean
-	CommandLineRunner initStorage(StorageService storageService) {
-		return (args) -> {
-            storageService.deleteAll();
-            storageService.init();
-		};
-	}
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-	    return new BCryptPasswordEncoder();
+		return new BCryptPasswordEncoder();
 	}
+
+
 }
